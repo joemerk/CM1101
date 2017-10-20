@@ -3,7 +3,6 @@
 from map import rooms
 import string
 
-
 def remove_punct(text):
     """This function is used to remove all punctuation
     marks from a string. Spaces do not count as punctuation and should
@@ -17,12 +16,13 @@ def remove_punct(text):
     >>> remove_punct(",go!So.?uTh")
     'goSouTh'
     """
-    new_string = ""
+    string_return = ""
+    #The new string that will be created in the for loop
     for ch in text:
         if (ch.isalpha() or (ch == ' ')):
-            new_string = new_string + ch
+            string_return = string_return + ch
      # The pass statement does nothing. Replace it with the body of your function.
-    return new_string
+    return string_return
     
 def remove_spaces(text):
     """This function is used to remove leading and trailing spaces from a string.
@@ -40,27 +40,28 @@ def remove_spaces(text):
     >>> remove_spaces("   ")
     ''
     """
-    string_started = False
-    new_string = ""
-    spaces_detected = 0
+    start_of_string = False
+    return_string = ""
+    spaces = 0
 
     for ch in text:
-        if (ch != ' ' and not string_started):
-            string_started = True
-        if string_started:
+        if (ch != ' ' and not start_of_string):
+            start_of_string  = True
+        if start_of_string :
             if (ch == ' '):
-                spaces_detected = spaces_detected + 1
-                new_string = new_string + ch
-            elif (ch != ' ' and spaces_detected > 0):
-                spaces_detected = 0
-                new_string = new_string + ch
+                spaces = spaces + 1
+                return_string = return_string + ch
+            elif (ch != ' ' and spaces > 0):
+                spaces = 0
+                return_string = return_string + ch
             else:
-                new_string = new_string + ch
+                return_string = return_string + ch
 
-    if (spaces_detected == 0):
-        return new_string
+    #remove trailing spaces from the end of string
+    if (spaces == 0):
+        return return_string
     else:
-        return new_string[:-spaces_detected]
+        return return_string[:-spaces]
 
 def normalise_input(user_input):
     """This function removes all punctuation, leading and trailing
@@ -74,11 +75,14 @@ def normalise_input(user_input):
     >>> normalise_input("HELP!!!!!!!")
     'help'
     """
-    normalised = remove_punct(user_input)
-    normalised = remove_spaces(normalised)
-    normalised = normalised.lower()
+    normalized = remove_punct(user_input)
+    #remove Punctuation
+    normalized = remove_spaces(normalized)
+    #remove spaces
+    normalized = normalized.lower()
+    #make the string lowercase
 
-    return normalised
+    return normalized
 
 
     
@@ -103,7 +107,10 @@ def display_room(room):
     """
     # pass # The pass statement does nothing. Replace it with the body of your function.
     name = room["name"].upper()
+    #makes the name of the room [string] uppercase
     print("\n" + name + "\n" + "\n" + room["description"] + "\n")
+
+    #return nothing
     
 def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
@@ -152,6 +159,9 @@ def print_menu(exits):
     Where do you want to go?
     """
     print("You can:")
+
+    #loop through each key in the exits
+    #use print_menu_line function for each of the exit destinations
     for key in exits:
         print_menu_line(key, exit_leads_to(exits, key))
     print("\n")
@@ -207,8 +217,6 @@ def menu(exits):
             print("Not a valid exit.\n")
             continue
             # If so, return the player's choice
-
-
 
 
 def move(exits, direction):

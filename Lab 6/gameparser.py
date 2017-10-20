@@ -28,19 +28,16 @@ def filter_words(words, skip_words):
     ['go', 'passage', 'south']
 
     """
-    user_input = words
+    initial_input = words
     new_input = []
 
-    for s in user_input:
+    for s in initial_input:
         valid = True
         for s_w in skip_words:
             if(s == s_w):
                 valid = False
         if (valid):
             new_input = new_input + [s]
-
-
-
     return new_input
 
 

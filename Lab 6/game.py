@@ -24,12 +24,14 @@ def list_of_items(items):
     'money, a student handbook, laptop'
 
     """
-    new_string = ""
-    for key in items:
-        new_string = new_string + key["name"] + ", "
-    new_string = new_string[:-2]
+    return_string = ""
+    #the string that will be returned from the function
 
-    return new_string
+    for key in items:
+        return_string = return_string + key["name"] + ", "
+    return_string = return_string[:-2]
+
+    return return_string
 
 def print_room_items(room):
     """This function takes a room as an input and nicely displays a list of items
@@ -53,9 +55,9 @@ def print_room_items(room):
     Note: <BLANKLINE> here means that doctest should expect a blank line.
 
     """
-    if (room["items"] != []):
-        nice_line = list_of_items(room["items"])
-        print("There is " + nice_line + " here." + "\n")
+    if (room["items"] != []): #if the items key of the passed-in dictionary is NOT empty:
+        line = list_of_items(room["items"]) #new string that will be printed to the console, using list_of_items function
+        print("There is " + line + " here." + "\n")
 
 def print_inventory_items(items):
     """This function takes a list of inventory items and displays it nicely, in a
@@ -68,7 +70,7 @@ def print_inventory_items(items):
 
     """
     print("You have " + list_of_items(items) + "." + "\n")
-
+    #Using list_of_items function to print
 
 def print_room(room):
     """This function takes a room as an input and nicely displays its name
@@ -117,13 +119,16 @@ def print_room(room):
     Note: <BLANKLINE> here means that doctest should expect a blank line.
     """
     # Display room name
-    print()
+    print() #linebreaks
+
     print(room["name"].upper())
     print()
     # Display room description
     print(room["description"])
     print()
-    print_room_items(room)
+
+
+    print_room_items(room) #print the room items to console
 
 
     #
@@ -158,6 +163,8 @@ def print_exit(direction, leads_to):
     >>> print_exit("south", "MJ and Simon's room")
     GO SOUTH to MJ and Simon's room.
     """
+
+
     print("GO " + direction.upper() + " to " + leads_to + ".")
 
 
@@ -192,17 +199,19 @@ def print_menu(exits, room_items, inv_items):
 
     """
     print("You can:")
+
     # Iterate over available exits
     for direction in exits:
         # Print the exit name and where it leads to
         print_exit(direction, exit_leads_to(exits, direction))
+
     for item in room_items:
-        print("TAKE " + item["id"].upper() + " to take " + item["name"] + ".")
+        print("TAKE " + item["id"].upper() + " to take " + item["name"] + ".") #print the TAKE item lines to the console
     for item in inv_items:
-        print("DROP " + item["id"].upper() + " to drop your " + item["name"] + ".")
+        print("DROP " + item["id"].upper() + " to drop your " + item["name"] + ".") #print the DROP items lines to the console
 
     #
-    # COMPLETE ME!
+    # 
     #
     
     print("What do you want to do?")
@@ -235,6 +244,8 @@ def execute_go(direction):
     """
 
     global current_room
+    #use global variable instead of creating local version
+
     if is_valid_exit(current_room["exits"], direction):
 
         new_room = move(current_room["exits"], direction)
@@ -249,14 +260,13 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-
-    for item in current_room["items"]:
-        if item["id"] == item_id:
-            if (item["mass"] + total_weight < max_weight):
+    for item in current_room["items"]: #For every item in the current rooms item list
+        if item["id"] == item_id: #if the item ID is the same as the one passed in the function then:
+            if (item["mass"] + total_weight < max_weight): #check item mass for max weight
                 global inventory
                 inventory.append(item)
                 current_room["items"].remove(item)
-                calculate_weight()
+                execute_weight()
                 return
             else:
                 print("You can't carry that much...")
@@ -278,7 +288,8 @@ def execute_drop(item_id):
         if item["id"] == item_id:
             inventory.remove(item)
             current_room["items"].append(item)
-            calculate_weight()
+
+            execute_weight()
             return
 
     print("You cannot drop that.")
@@ -328,8 +339,6 @@ def menu(exits, room_items, inv_items):
 
     # Display menu
     print_menu(exits, room_items, inv_items)
-
-    # Read player's input
     user_input = input("> ")
 
     # Normalise the input
@@ -354,34 +363,36 @@ def move(exits, direction):
     # Next room to go to
     return rooms[exits[direction]]
 
-def calculate_weight():
-    temp_weight = 0
+def execute_weight():
+    weight = 0
     for item in inventory:
-        temp_weight = temp_weight + item["mass"]
+        weight = weight + item["mass"]
+
 
     global total_weight
-    total_weight = temp_weight
+    total_weight = weight
 
 # This is the entry point of our program
 def main():
-    firstExec = True
+    firstLoop = True
     # Main game loop
     while True:
         # Display game status (room description, inventory etc.)
 
-        if (firstExec):
+        if (firstLoop):
             print("Welcome to the game.\nYour objective is to find all the items, and drop them off at your personal tutor's office.")
             print("Good luck!\n")
-            firstExec = False
+            firstLoop = False
 
         if (len(rooms["Tutor"]["items"]) == 6):
             print("\nYou won the game!\nYou found all the items!")
             bufferT = input("\n Press Enter to exit.")
             return
 
-        calculate_weight()
+        execute_weight()
 
         print_room(current_room)
+
         print_inventory_items(inventory)
 
         # Show the menu with possible actions and ask the player
